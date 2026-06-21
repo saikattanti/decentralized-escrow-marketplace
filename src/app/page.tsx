@@ -1,59 +1,112 @@
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Shield, Zap, Lock } from "lucide-react";
+"use client";
+
 import Link from "next/link";
+import { ArrowRight, ShieldCheck, Lock, Zap, Globe } from "lucide-react";
 
-export default function Home() {
+export default function LandingPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] bg-background">
-      {/* Hero Section */}
-      <section className="w-full py-20 lg:py-32 flex flex-col items-center text-center px-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-primary/5 rounded-full blur-[120px] -z-10 w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-        
-        <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm font-medium text-primary mb-8 backdrop-blur-sm">
-          <Zap className="mr-2 h-4 w-4" />
-          Powered by Soroban on Stellar Testnet
+    <div className="min-h-screen bg-[#0a0a0c] text-white selection:bg-primary/30">
+      {/* Standalone Landing Navbar */}
+      <header className="absolute top-0 w-full z-50">
+        <div className="container mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="bg-primary/20 p-2 rounded-xl border border-primary/20">
+              <ShieldCheck className="w-6 h-6 text-primary" />
+            </div>
+            <span className="font-extrabold text-xl tracking-tight text-white">Trustless<span className="text-primary">.</span></span>
+          </div>
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
+            <Link href="#features" className="hover:text-white transition-colors">Features</Link>
+            <Link href="#developers" className="hover:text-white transition-colors">Developers</Link>
+            <Link href="#pricing" className="hover:text-white transition-colors">Pricing</Link>
+          </nav>
+          <div className="flex items-center gap-4">
+            <Link href="/dashboard" className="hidden md:flex px-4 py-2 text-sm font-semibold text-white/90 hover:text-white transition-colors">
+              Sign In
+            </Link>
+            <Link 
+              href="/dashboard" 
+              className="px-5 py-2.5 rounded-full bg-white text-black font-bold text-sm hover:bg-white/90 transition-all hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+            >
+              Launch App
+            </Link>
+          </div>
         </div>
-        
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 max-w-4xl bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
-          The Trustless Escrow Infrastructure
-        </h1>
-        
-        <p className="text-xl text-muted-foreground max-w-2xl mb-10 leading-relaxed">
-          Secure your transactions with programmable, decentralized escrows. 
-          No intermediaries, instant settlement, and full transparency.
-        </p>
-        
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link href="/marketplace">
-            <Button size="lg" className="h-14 px-8 text-lg rounded-full shadow-lg shadow-primary/25 hover:scale-105 transition-transform">
-              Launch App <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
-          <Link href="/activity">
-            <Button size="lg" variant="outline" className="h-14 px-8 text-lg rounded-full border-border hover:bg-secondary transition-colors">
-              View Activity
-            </Button>
-          </Link>
-        </div>
-      </section>
+      </header>
 
-      {/* Features Section */}
-      <section className="w-full py-20 bg-secondary/20 border-t border-border/50">
-        <div className="container mx-auto px-4 grid md:grid-cols-3 gap-8">
-          <div className="p-8 rounded-3xl bg-card border border-border hover:border-primary/50 transition-colors shadow-sm">
-            <Shield className="w-12 h-12 text-primary mb-6" />
-            <h3 className="text-2xl font-bold mb-3">100% Secure</h3>
-            <p className="text-muted-foreground">Funds are locked in a Soroban smart contract, impossible to tamper with until conditions are met.</p>
+      {/* Hero Section */}
+      <main className="relative pt-32 pb-16 md:pt-48 md:pb-32 overflow-hidden">
+        {/* Abstract Background Elements */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/20 blur-[120px] rounded-[100%] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 blur-[150px] rounded-[100%] pointer-events-none" />
+        
+        <div className="container mx-auto px-6 relative z-10 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-primary mb-8 animate-in fade-in slide-in-from-bottom-4">
+            <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+            Stellar Soroban Mainnet Ready
           </div>
-          <div className="p-8 rounded-3xl bg-card border border-border hover:border-primary/50 transition-colors shadow-sm">
-            <Zap className="w-12 h-12 text-primary mb-6" />
-            <h3 className="text-2xl font-bold mb-3">Instant Settlement</h3>
-            <p className="text-muted-foreground">Built on Stellar, meaning fees are fractions of a cent and transactions settle in seconds.</p>
+          
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1] animate-in fade-in slide-in-from-bottom-6 animation-delay-100">
+            The Enterprise Standard <br className="hidden md:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white/80 to-white/40">
+              for Trustless Escrow
+            </span>
+          </h1>
+          
+          <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-12 animate-in fade-in slide-in-from-bottom-8 animation-delay-200">
+            Secure cross-border B2B trades, OTC digital asset swaps, and freelance payments natively on Stellar with instant settlement and decentralized arbitration.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-10 animation-delay-300">
+            <Link 
+              href="/dashboard" 
+              className="group flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-primary-foreground font-bold text-lg hover:bg-primary/90 transition-all hover:shadow-[0_0_30px_rgba(var(--primary),0.5)]"
+            >
+              Get Started
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link 
+              href="https://github.com/saikattanti/decentralized-escrow-marketplace" 
+              target="_blank"
+              className="px-8 py-4 rounded-full bg-white/5 border border-white/10 text-white font-bold text-lg hover:bg-white/10 transition-all"
+            >
+              Read Documentation
+            </Link>
           </div>
-          <div className="p-8 rounded-3xl bg-card border border-border hover:border-primary/50 transition-colors shadow-sm">
-            <Lock className="w-12 h-12 text-primary mb-6" />
-            <h3 className="text-2xl font-bold mb-3">Decentralized Arbiter</h3>
-            <p className="text-muted-foreground">Assign trusted third-parties to resolve disputes transparently on-chain.</p>
+        </div>
+      </main>
+
+      {/* Features Grid */}
+      <section id="features" className="py-24 bg-[#050505] border-t border-white/5">
+        <div className="container mx-auto px-6">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="p-8 rounded-3xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors">
+              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-6 border border-blue-500/20">
+                <Lock className="w-6 h-6 text-blue-400" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-white">Absolute Security</h3>
+              <p className="text-white/60 leading-relaxed">
+                Smart contracts audited for enterprise workloads. Funds are locked mathematically on-chain until mutual agreement.
+              </p>
+            </div>
+            <div className="p-8 rounded-3xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 border border-primary/20">
+                <Zap className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-white">Instant Settlement</h3>
+              <p className="text-white/60 leading-relaxed">
+                Leverage Stellar's 5-second finality. Escrows are funded, released, or refunded practically instantly.
+              </p>
+            </div>
+            <div className="p-8 rounded-3xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-6 border border-emerald-500/20">
+                <Globe className="w-6 h-6 text-emerald-400" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-white">USDC & Fiat Integration</h3>
+              <p className="text-white/60 leading-relaxed">
+                Execute contracts natively in USDC or via Stellar Anchors, bypassing crypto volatility entirely.
+              </p>
+            </div>
           </div>
         </div>
       </section>

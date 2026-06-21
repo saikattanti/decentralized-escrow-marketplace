@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Decentralized Escrow SaaS
 
-## Getting Started
+A highly secure, decentralized escrow marketplace built natively on the Stellar network using Soroban Smart Contracts and Next.js 15.
 
-First, run the development server:
+## Overview
+Trustless provides programmable, decentralized escrows with instant settlement. It acts as an infrastructure layer allowing buyers and sellers to interact securely without intermediaries. Escrow disputes can be resolved transparently by a designated decentralized Arbiter.
 
+## Features
+- **Wallet Integration**: Powered by `@creit.tech/stellar-wallets-kit`, supporting Freighter and multiple wallets.
+- **Smart Contract Foundation**: Soroban smart contracts manage the state (Pending, Released, Refunded, Disputed, Resolved).
+- **Real-Time Data**: Tracks active escrows and on-chain events seamlessly using `@tanstack/react-query`.
+- **Modern SaaS Aesthetics**: Sleek dark-mode interface built with `shadcn/ui` and `Tailwind CSS`.
+- **Transaction Tracking**: Status tracking (Pending/Success/Failed) directly tied to Stellar transactions.
+
+## Tech Stack
+- Next.js 15 (App Router)
+- TypeScript
+- Tailwind CSS v4
+- shadcn/ui
+- Zustand (State Management)
+- React Query (Data Fetching)
+- StellarWalletsKit
+- Soroban SDK & Stellar JavaScript SDK
+
+---
+
+## Setup Instructions
+
+### 1. Clone & Install Dependencies
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository>
+cd decentralized-escrow-marketplace
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Environment Variables
+Create a `.env.local` file in the root directory:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+# Next.js Environment Variables
+NEXT_PUBLIC_ESCROW_CONTRACT_ID=CONTRACT_ADDRESS_HERE
+NEXT_PUBLIC_STELLAR_NETWORK=TESTNET
+```
+> Note: Replace `CONTRACT_ADDRESS_HERE` with the ID of your externally deployed Soroban Escrow contract.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Wallet Setup
+To use the application, install the [Freighter Wallet](https://www.freighter.app/) extension in your browser. Ensure you switch the network to **Testnet** in the Freighter settings.
 
-## Learn More
+### 4. Running Locally
+Start the development server:
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contract Deployment (External)
+Since the Soroban contract is deployed from an external IDE, simply compile your Rust smart contract using `stellar contract build`, deploy it to the Testnet, and copy the resulting `C...` contract ID into your `.env.local` file.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Example Transaction Hash: `TRANSACTION_HASH_HERE`
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+This project is optimized for deployment on Vercel.
+1. Push your code to a GitHub repository.
+2. Import the project in Vercel.
+3. Add the Environment Variables (`NEXT_PUBLIC_ESCROW_CONTRACT_ID`, `NEXT_PUBLIC_STELLAR_NETWORK`).
+4. Click **Deploy**.

@@ -1,70 +1,80 @@
-# Decentralized Escrow SaaS
+# Trustless: Enterprise Escrow SaaS on Stellar
 
-A highly secure, decentralized escrow marketplace built natively on the Stellar network using Soroban Smart Contracts and Next.js 15.
-
-## Overview
-Trustless provides programmable, decentralized escrows with instant settlement. It acts as an infrastructure layer allowing buyers and sellers to interact securely without intermediaries. Escrow disputes can be resolved transparently by a designated decentralized Arbiter.
-
-## Features
-- **Wallet Integration**: Powered by `@creit.tech/stellar-wallets-kit`, supporting Freighter and multiple wallets.
-- **Smart Contract Foundation**: Soroban smart contracts manage the state (Pending, Released, Refunded, Disputed, Resolved).
-- **Real-Time Data**: Tracks active escrows and on-chain events seamlessly using `@tanstack/react-query`.
-- **Modern SaaS Aesthetics**: Sleek dark-mode interface built with `shadcn/ui` and `Tailwind CSS`.
-- **Transaction Tracking**: Status tracking (Pending/Success/Failed) directly tied to Stellar transactions.
-
-## Tech Stack
-- Next.js 15 (App Router)
-- TypeScript
-- Tailwind CSS v4
-- shadcn/ui
-- Zustand (State Management)
-- React Query (Data Fetching)
-- StellarWalletsKit
-- Soroban SDK & Stellar JavaScript SDK
+A highly scalable, full-stack Enterprise SaaS platform built on **Stellar Soroban**. Trustless provides secure, programmable escrows for cross-border B2B trades, OTC digital asset swaps, and freelance payments with instant settlement and decentralized arbitration.
 
 ---
 
-## Setup Instructions
+## 🔗 Contract Explorer Link
 
-### 1. Clone & Install Dependencies
-```bash
-git clone <repository>
-cd decentralized-escrow-marketplace
-npm install
-```
-
-### 2. Environment Variables
-Create a `.env.local` file in the root directory:
-
-```env
-# Next.js Environment Variables
-NEXT_PUBLIC_ESCROW_CONTRACT_ID=CONTRACT_ADDRESS_HERE
-NEXT_PUBLIC_STELLAR_NETWORK=TESTNET
-```
-> Note: Replace `CONTRACT_ADDRESS_HERE` with the ID of your externally deployed Soroban Escrow contract.
-
-### 3. Wallet Setup
-To use the application, install the [Freighter Wallet](https://www.freighter.app/) extension in your browser. Ensure you switch the network to **Testnet** in the Freighter settings.
-
-### 4. Running Locally
-Start the development server:
-```bash
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) to view the application.
+Live Smart Contract on **Stellar Expert (Testnet)**:  
+[CDPUYYBUQKGJECU5SAPIEDFL6LOWNQHH25EEY72NH6GKYKZ3YRG5IXGK](https://stellar.expert/explorer/testnet/contract/CDPUYYBUQKGJECU5SAPIEDFL6LOWNQHH25EEY72NH6GKYKZ3YRG5IXGK)
 
 ---
 
-## Contract Deployment (External)
-Since the Soroban contract is deployed from an external IDE, simply compile your Rust smart contract using `stellar contract build`, deploy it to the Testnet, and copy the resulting `C...` contract ID into your `.env.local` file.
+## ✨ Features
 
-Example Transaction Hash: `TRANSACTION_HASH_HERE`
+- **Enterprise SaaS Dashboard**: Real-time analytics, escrow health status, and platform volume tracked via beautiful Recharts visualizations.
+- **Wallet Integration**: Seamless Web3 login powered by `@creit.tech/stellar-wallets-kit` (Supports Freighter & more).
+- **Programmable Escrows**: Create customized escrows specifying Buyer, Seller, Arbiter, and Token (Native XLM or USDC).
+- **Live Activity Feed**: Animated, glassmorphism event tracker mirroring on-chain Soroban events.
+- **Decentralized Arbitration**: Trustless dispute resolution mechanisms ensuring absolute security.
 
 ---
 
-## Deployment
-This project is optimized for deployment on Vercel.
-1. Push your code to a GitHub repository.
-2. Import the project in Vercel.
-3. Add the Environment Variables (`NEXT_PUBLIC_ESCROW_CONTRACT_ID`, `NEXT_PUBLIC_STELLAR_NETWORK`).
-4. Click **Deploy**.
+## 📸 Platform Screenshots
+
+### 1. High-Converting SaaS Landing Page
+![Landing Page](public/landing-page.png)
+
+### 2. Analytics Dashboard
+![Dashboard](public/dashboard.png)
+
+### 3. Real-Time Activity Feed
+![Activities Feed](public/activities.png)
+
+### 4. Smart Contract on Stellar Expert
+![Smart Contract Explorer](public/smart-contract.png)
+
+---
+
+## 📁 Project Structure
+
+- `contracts/`: Soroban smart contract workspace (Rust).
+  - `contracts/escrow/src/lib.rs`: Core escrow state and transition logic.
+- `src/lib/`: Frontend-to-contract integration helpers & XDR parsers.
+- `src/app/`: Next.js 15 App Router frontend (Landing, Dashboard, Marketplace).
+- `public/`: Static assets and dashboard screenshots.
+
+---
+
+## 🚀 Run Locally
+
+1. **Install dependencies**:
+   \`\`\`bash
+   npm install
+   \`\`\`
+
+2. **Setup Environment Variables**:
+   Create a \`.env.local\` file based on the `.env.example`:
+   \`\`\`env
+   NEXT_PUBLIC_ESCROW_CONTRACT_ID=CDPUYYBUQKGJECU5SAPIEDFL6LOWNQHH25EEY72NH6GKYKZ3YRG5IXGK
+   NEXT_PUBLIC_STELLAR_NETWORK=TESTNET
+   NEXT_PUBLIC_RPC_URL=https://soroban-testnet.stellar.org
+   \`\`\`
+
+3. **Start development server**:
+   \`\`\`bash
+   npm run dev
+   \`\`\`
+
+4. **Open in browser**:  
+   [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 🛠 Tech Stack
+
+- **Frontend**: Next.js 15, React, Tailwind CSS, shadcn/ui, Recharts, Framer Motion
+- **State Management**: Zustand, React Query
+- **Blockchain**: Stellar SDK, Soroban RPC, Freighter API
+- **Smart Contracts**: Rust (Soroban Environment)

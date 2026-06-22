@@ -139,3 +139,6 @@ impl EscrowContract {
             .unwrap_or_else(|| panic!("Escrow not found"))
     }
 }
+
+#[cfg(test)]
+mod test;

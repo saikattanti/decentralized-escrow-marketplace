@@ -2,7 +2,9 @@
 
 A highly scalable, full-stack Enterprise SaaS platform built on **Stellar Soroban**. Trustless provides secure, programmable escrows for cross-border B2B trades, OTC digital asset swaps, and freelance payments with instant settlement and decentralized arbitration.
 
-**🎥 Watch the Demo Video**: [https://youtu.be/So2uem7Jmw8](https://youtu.be/So2uem7Jmw8)
+**🎥 Watch the Demo Video**: 
+
+[![Watch the video](https://img.youtube.com/vi/So2uem7Jmw8/maxresdefault.jpg)](https://youtu.be/So2uem7Jmw8)
 
 ---
 

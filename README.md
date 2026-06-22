@@ -11,13 +11,14 @@ Live Smart Contract on **Stellar Expert (Testnet)**:
 
 ---
 
-## ✨ Features
+## ✨ Features (Level 3 Ready)
 
 - **Enterprise SaaS Dashboard**: Real-time analytics, escrow health status, and platform volume tracked via beautiful Recharts visualizations.
-- **Wallet Integration**: Seamless Web3 login powered by `@creit.tech/stellar-wallets-kit` (Supports Freighter & more).
-- **Programmable Escrows**: Create customized escrows specifying Buyer, Seller, Arbiter, and Token (Native XLM or USDC).
-- **Live Activity Feed**: Animated, glassmorphism event tracker mirroring on-chain Soroban events.
-- **Decentralized Arbitration**: Trustless dispute resolution mechanisms ensuring absolute security.
+- **100% Mobile Responsive UI**: Fully responsive sidebar, glassmorphism topbars with mobile slide-out navigation for on-the-go access.
+- **Smart Contract Test Suite**: Comprehensive Rust integration tests validating creation, funding, release, and decentralized arbitration.
+- **Continuous Integration (CI/CD)**: Automated GitHub Actions pipeline ensuring successful Rust contract tests and Next.js production builds on every push.
+- **Wallet Integration**: Seamless Web3 login powered by `@creit.tech/stellar-wallets-kit` (Supports Freighter).
+- **Programmable Escrows**: Create customized escrows specifying Buyer, Seller, Arbiter, and Token.
 
 ---
 
@@ -41,8 +42,10 @@ Live Smart Contract on **Stellar Expert (Testnet)**:
 
 - `contracts/`: Soroban smart contract workspace (Rust).
   - `contracts/escrow/src/lib.rs`: Core escrow state and transition logic.
+  - `contracts/escrow/src/test.rs`: Suite of passing tests.
+- `.github/workflows/`: CI/CD Pipeline configuration.
 - `src/lib/`: Frontend-to-contract integration helpers & XDR parsers.
-- `src/app/`: Next.js 15 App Router frontend (Landing, Dashboard, Marketplace).
+- `src/app/`: Next.js 15 App Router frontend.
 - `public/`: Static assets and dashboard screenshots.
 
 ---
@@ -50,25 +53,28 @@ Live Smart Contract on **Stellar Expert (Testnet)**:
 ## 🚀 Run Locally
 
 1. **Install dependencies**:
-   \`\`\`bash
+   ```bash
    npm install
-   \`\`\`
+   ```
 
 2. **Setup Environment Variables**:
-   Create a \`.env.local\` file based on the `.env.example`:
-   \`\`\`env
+   Create a `.env.local` file:
+   ```env
    NEXT_PUBLIC_ESCROW_CONTRACT_ID=CDPUYYBUQKGJECU5SAPIEDFL6LOWNQHH25EEY72NH6GKYKZ3YRG5IXGK
    NEXT_PUBLIC_STELLAR_NETWORK=TESTNET
    NEXT_PUBLIC_RPC_URL=https://soroban-testnet.stellar.org
-   \`\`\`
+   ```
 
 3. **Start development server**:
-   \`\`\`bash
+   ```bash
    npm run dev
-   \`\`\`
+   ```
 
-4. **Open in browser**:  
-   [http://localhost:3000](http://localhost:3000)
+4. **Test Smart Contracts**:
+   ```bash
+   cd contracts/escrow
+   cargo test
+   ```
 
 ---
 
@@ -78,3 +84,4 @@ Live Smart Contract on **Stellar Expert (Testnet)**:
 - **State Management**: Zustand, React Query
 - **Blockchain**: Stellar SDK, Soroban RPC, Freighter API
 - **Smart Contracts**: Rust (Soroban Environment)
+- **DevOps**: GitHub Actions (CI/CD)

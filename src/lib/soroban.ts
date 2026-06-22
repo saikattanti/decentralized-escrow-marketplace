@@ -1,18 +1,27 @@
-import { rpc, Contract, xdr, Address, scValToNative, nativeToScVal } from "@stellar/stellar-sdk";
+import { 
+  rpc, 
+  Contract, 
+  xdr, 
+  Address, 
+  scValToNative, 
+  nativeToScVal, 
+  TransactionBuilder, 
+  Networks, 
+  BASE_FEE 
+} from "@stellar/stellar-sdk";
+import { StellarWalletsKit } from "@creit.tech/stellar-wallets-kit";
 
-export const NETWORK_URL = process.env.NEXT_PUBLIC_STELLAR_NETWORK === "PUBLIC" 
-  ? "https://soroban-rpc.mainnet.stellar.org" 
-  : "https://soroban-testnet.stellar.org";
-  
+// ─── Network Config ─────────────────────────────────────────────
+export const NETWORK_URL = process.env.NEXT_PUBLIC_RPC_URL || "https://soroban-testnet.stellar.org";
 export const NETWORK_PASSPHRASE = process.env.NEXT_PUBLIC_STELLAR_NETWORK === "PUBLIC"
-  ? "Public Global Stellar Network ; September 2015"
-  : "Test SDF Network ; September 2015";
-
-export const CONTRACT_ID = process.env.NEXT_PUBLIC_ESCROW_CONTRACT_ID || "CONTRACT_ADDRESS_HERE";
+  ? Networks.PUBLIC
+  : Networks.TESTNET;
+export const CONTRACT_ID = process.env.NEXT_PUBLIC_ESCROW_CONTRACT_ID || "";
 
 export const server = new rpc.Server(NETWORK_URL);
 export const contract = new Contract(CONTRACT_ID);
 
+// ─── Types ──────────────────────────────────────────────────────
 export interface EscrowState {
   id: number;
   buyer: string;
@@ -23,10 +32,9 @@ export interface EscrowState {
   status: "Pending" | "Released" | "Refunded" | "Disputed" | "Resolved";
 }
 
-// Helper to parse Soroban Escrow state
+// ─── Parse Soroban ScVal → EscrowState ──────────────────────────
 export function parseEscrowState(val: xdr.ScVal): EscrowState {
   const native = scValToNative(val);
-  // Example native parse, assumes contract returns a map or array matching the struct
   return {
     id: Number(native.id),
     buyer: native.buyer,
@@ -38,46 +46,72 @@ export function parseEscrowState(val: xdr.ScVal): EscrowState {
   };
 }
 
-export async function fetchEscrow(id: number): Promise<EscrowState> {
-  // --- UI MOCKUP BYPASS ---
-  // If the user searches for 1042 (from the activity feed), show a beautiful mocked escrow state!
-  if (id === 1042) {
-    return new Promise(resolve => setTimeout(() => resolve({
-      id: 1042,
-      buyer: "GDWM4YTCR63Z3O4WUCW6SXFA4TFEGOW2C3MPBMIQAYG644OCWF6QIJTR",
-      seller: "GBVD5O3YZZJ2S3ZIVL6D6IEX7N2EZG7XKV3X4LFW2452I7X6QHTR2I4H",
-      arbiter: "GC7D4KWWZ4MIF2RNYAQQ4UYZ5K5VQZCQ5N2N6X4G7LZN7X6X7X6X7X6X",
-      token: "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
-      amount: 100,
-      status: "Pending"
-    }), 1000));
-  }
-  // ------------------------
+// ─── Build, Sign & Submit a Contract Call ────────────────────────
+async function buildAndSubmitTx(
+  callerAddress: string,
+  method: string,
+  ...args: xdr.ScVal[]
+): Promise<string> {
+  // 1. Get the caller's account from the network
+  const account = await server.getAccount(callerAddress);
 
-  try {
-    const tx = contract.call("get_escrow", nativeToScVal(id, { type: "u64" }));
-    // Simulate transaction requires a fully built transaction envelope in latest SDK, 
-    // but for simple getter simulation, we often rely on a mock or proper building.
-    // For now, if it fails, we fall back.
-    const res = await server.simulateTransaction(tx as any);
-    if (rpc.Api.isSimulationSuccess(res) && res.result) {
-      return parseEscrowState(res.result.retval);
-    }
-  } catch (e) {
-    console.error("Simulation failed:", e);
+  // 2. Build the transaction
+  const tx = new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: NETWORK_PASSPHRASE,
+  })
+    .addOperation(contract.call(method, ...args))
+    .setTimeout(300)
+    .build();
+
+  // 3. Simulate to get the authorizations & resource footprint
+  const simResult = await server.simulateTransaction(tx);
+
+  if (!rpc.Api.isSimulationSuccess(simResult)) {
+    throw new Error("Transaction simulation failed. Check contract state.");
   }
-  throw new Error("Escrow not found or simulation failed");
+
+  // 4. Assemble the transaction with the simulation result
+  const preparedTx = rpc.assembleTransaction(tx, simResult).build();
+
+  // 5. Sign using the user's Stellar wallet (Freighter, etc.)
+  const { signedTxXdr } = await StellarWalletsKit.signTransaction(preparedTx.toXDR());
+
+  // 6. Submit to the network
+  const txEnvelope = TransactionBuilder.fromXDR(signedTxXdr, NETWORK_PASSPHRASE);
+  const sendResponse = await server.sendTransaction(txEnvelope);
+
+  if (sendResponse.status === "ERROR") {
+    throw new Error(`Transaction submission failed: ${sendResponse.status}`);
+  }
+
+  // 7. Poll for confirmation
+  const hash = sendResponse.hash;
+  let getResponse = await server.getTransaction(hash);
+  
+  while (getResponse.status === "NOT_FOUND") {
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    getResponse = await server.getTransaction(hash);
+  }
+
+  if (getResponse.status === "FAILED") {
+    throw new Error("Transaction failed on-chain.");
+  }
+
+  return hash;
 }
 
-export async function buildCreateEscrowTx(
+// ─── Contract Method Wrappers ───────────────────────────────────
+
+export async function createEscrow(
   buyer: string,
   seller: string,
   arbiter: string,
   token: string,
   amount: number
-) {
-  const account = await server.getAccount(buyer);
-  const tx = contract.call(
+): Promise<string> {
+  return buildAndSubmitTx(
+    buyer,
     "create_escrow",
     new Address(buyer).toScVal(),
     new Address(seller).toScVal(),
@@ -85,21 +119,53 @@ export async function buildCreateEscrowTx(
     new Address(token).toScVal(),
     nativeToScVal(amount, { type: "i128" })
   );
-  // Prepare transaction
-  return tx;
 }
 
-export async function submitTx(signedTxXdr: string) {
-  const tx = xdr.TransactionEnvelope.fromXDR(signedTxXdr, "base64");
-  const res = await server.sendTransaction(tx as any);
-  return res.hash;
+export async function releaseFunds(callerAddress: string, escrowId: number): Promise<string> {
+  return buildAndSubmitTx(
+    callerAddress,
+    "release_funds",
+    nativeToScVal(escrowId, { type: "u64" })
+  );
 }
 
-export async function trackTx(hash: string) {
-  let status = await server.getTransaction(hash);
-  while (status.status === "NOT_FOUND") {
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    status = await server.getTransaction(hash);
+export async function refundEscrow(callerAddress: string, escrowId: number): Promise<string> {
+  return buildAndSubmitTx(
+    callerAddress,
+    "refund",
+    nativeToScVal(escrowId, { type: "u64" })
+  );
+}
+
+export async function resolveDispute(
+  callerAddress: string, 
+  escrowId: number, 
+  releaseToSeller: boolean
+): Promise<string> {
+  return buildAndSubmitTx(
+    callerAddress,
+    "resolve_dispute",
+    nativeToScVal(escrowId, { type: "u64" }),
+    xdr.ScVal.scvBool(releaseToSeller)
+  );
+}
+
+export async function fetchEscrow(id: number): Promise<EscrowState> {
+  const account = await server.getAccount(CONTRACT_ID).catch(() => null);
+  
+  const tx = new TransactionBuilder(
+    account || await server.getAccount("GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF"),
+    { fee: BASE_FEE, networkPassphrase: NETWORK_PASSPHRASE }
+  )
+    .addOperation(contract.call("get_escrow", nativeToScVal(id, { type: "u64" })))
+    .setTimeout(30)
+    .build();
+
+  const simResult = await server.simulateTransaction(tx);
+
+  if (rpc.Api.isSimulationSuccess(simResult) && simResult.result) {
+    return parseEscrowState(simResult.result.retval);
   }
-  return status;
+
+  throw new Error("Escrow not found on the network.");
 }

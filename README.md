@@ -46,7 +46,7 @@ A **highly scalable, full-stack Enterprise SaaS platform** built on Stellar Soro
 
 ---
 
-## ✨ Features (Level 3 Ready)
+## ✨ Features
 
 - **🔒 Absolute Security** — Smart contracts audited for enterprise workloads. Funds are locked mathematically on-chain until mutual agreement.
 - **⚡ Instant Settlement** — Leverage Stellar's 5-second finality. Escrows are funded, released, or refunded practically instantly.
